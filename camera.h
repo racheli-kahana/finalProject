@@ -1,13 +1,14 @@
-#include"baseMessage.h"
-#include"Buffer.h"
 #ifndef CAMERA
 #define CAMERA
+#include"Buffer.h"
+
 class camera
 {
 	char cameraId;
-	baseMessage** messages;
-	Buffer* buffer;
+	baseMessage** messages=nullptr;
+	Buffer buffer;
 	bool isActive;
+	int size = 0;
 public:
 	camera();
 	camera(char id);

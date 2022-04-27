@@ -1,4 +1,6 @@
 #pragma once
+#ifndef STATUSMESSAGE
+#define STATUSMESSAGE
 #include "baseMessage.h"
 class statusMessage :public baseMessage
 {
@@ -12,4 +14,7 @@ public:
 	statusMessage();
 	~statusMessage();
 };
+
+#endif // !STATUSMESSAGE
+
 

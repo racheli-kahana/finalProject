@@ -1,4 +1,3 @@
-#pragma once
 #ifndef BASEMESSAGE
 #define BASEMESSAGE
 	class baseMessage {
@@ -13,7 +12,7 @@
 		unsigned char* getMessageBuffer();
 		baseMessage(int messageId, int messageType);
 		baseMessage();
-		~baseMessage();
+		
 	};
 #endif 
 

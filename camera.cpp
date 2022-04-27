@@ -1,8 +1,5 @@
 #include "camera.h"
-#include"discoverMessage.h"
-#include"statusMessage.h"
 #include<random>
-static int messageIndex = 0;
 statusMessage* createStatusMessage()
 {
 	static int id = 1;
@@ -11,11 +8,11 @@ statusMessage* createStatusMessage()
 	return sm;
 }
 
-discoverMessage* createDiscoverMessage()
+discoverM* createDiscoverMessage()
 {
 	static int id = 100;
 	id++;
-	discoverMessage* dm = new discoverMessage(id, 2, rand() % 9500 + 500, rand() % 361, rand() % 1001);
+	discoverM* dm = new discoverM(id, 2, rand() % 9500 + 500, rand() % 361, rand() % 1001);
 	return dm;
 }
 camera::camera()
@@ -29,34 +26,39 @@ camera::camera(char id)
 }
 void camera::generate() {
 	int messageType;
-	
+
+	this->messages = (baseMessage**)realloc(this->messages, sizeof(baseMessage*) * (size+5));
+	if (messages == NULL)
+		exit(1);
 	for (int i = 0; i < 5; i++)
 	{
-		baseMessage* message=nullptr;
-		messageType = rand() % 2 + 1;
+		
+			messageType = rand() % 2 + 1;
 		if (messageType == 1)
-		discoverMessage*(message)=createDiscoverMessage();
+			this->messages[size++]=createDiscoverMessage();
 		else
-		statusMessage* (message)=createStatusMessage();
-		this->messages = (baseMessage**)realloc(this->messages, sizeof(message));
-		this->messages[messageIndex++] = message;
+			this->messages[size++]=createStatusMessage();
+		
 	}
 }
 void camera::sendToBuffer() {
-	for (int i = 0; i < messageIndex; i++)
+	for (int i = 0; i < this->size; i++)
 	{
 		messages[i]->parseBack();
-		this->buffer->addToBuffer( (char*)messages[i]->getMessageBuffer());
-		free(this->messages[i]);
+		 messages[i]->print();
+		buffer.addToBuffer( (char*)messages[i]->getMessageBuffer());
+		free(this->messages[i]->getMessageBuffer());
+		delete(this->messages[i]);
 	}
-	free(messages);
-}
+	free(this->messages);
+	messages = nullptr;
+	size = 0;
+	}
 void camera::run() {
 	int j = 0;
 	while (isActive == true) {
 		j++;
 		generate();
-		if (j % 5 == 0)
 		sendToBuffer();
 	}
 }

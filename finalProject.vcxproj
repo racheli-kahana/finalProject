@@ -85,7 +85,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
@@ -139,20 +139,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\Downloads\discoverMessage.cpp" />
     <ClCompile Include="..\..\..\..\Downloads\statusMessage.cpp" />
     <ClCompile Include="baseMessage.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="discoverM.cpp" />
     <ClCompile Include="finalProject.cpp" />
     <ClCompile Include="simulator.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Downloads\discoverMessage.h" />
     <ClInclude Include="..\..\..\..\Downloads\statusMessage.h" />
     <ClInclude Include="baseMessage.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="discoverM.h" />
     <ClInclude Include="simulator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
