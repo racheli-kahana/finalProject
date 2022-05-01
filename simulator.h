@@ -4,10 +4,8 @@ class simulator
 {
 	camera** cameras;
 public:
-	   simulator();
-		void runCamera();
-
-
-	
+	simulator();
+	void runCamera();
+	void print();
 };
 

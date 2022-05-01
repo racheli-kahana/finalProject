@@ -1,5 +1,6 @@
 #include "camera.h"
 #include<random>
+//#include<iostream>
 statusMessage* createStatusMessage()
 {
 	static int id = 1;
@@ -18,50 +19,98 @@ discoverM* createDiscoverMessage()
 camera::camera()
 {
 	isActive = true;
+	cameraBuffer = new Buffer();
 }
 camera::camera(char id)
 {
 	isActive = true;
 	this->cameraId = id;
+	cameraBuffer = new Buffer();
+
+}
+char** camera::getCameraBuffer() {
+	return this->cameraBuffer->getBuffer();
 }
 void camera::generate() {
 	int messageType;
-
-	this->messages = (baseMessage**)realloc(this->messages, sizeof(baseMessage*) * (size+5));
+	this->messages = (baseMessage**)realloc(this->messages, sizeof(baseMessage*) * (size + 5));
 	if (messages == NULL)
 		exit(1);
 	for (int i = 0; i < 5; i++)
 	{
-		
-			messageType = rand() % 2 + 1;
+		messageType = rand() % 2 + 1;
 		if (messageType == 1)
-			this->messages[size++]=createDiscoverMessage();
+			this->messages[size++] = createDiscoverMessage();
 		else
-			this->messages[size++]=createStatusMessage();
-		
+			this->messages[size++] = createStatusMessage();
+
 	}
 }
 void camera::sendToBuffer() {
 	for (int i = 0; i < this->size; i++)
 	{
 		messages[i]->parseBack();
-		 messages[i]->print();
-		buffer.addToBuffer( (char*)messages[i]->getMessageBuffer());
+		// messages[i]->print();
+		cameraBuffer->addToBuffer((char*)messages[i]->getMessageBuffer());
 		free(this->messages[i]->getMessageBuffer());
 		delete(this->messages[i]);
 	}
 	free(this->messages);
 	messages = nullptr;
+	messageCount += size;
 	size = 0;
-	}
+}
 void camera::run() {
-	int j = 0;
-	while (isActive == true) {
-		j++;
+	//while (isActive == true)
+	for (int k = 0; k < 1000; ++k)
+	{
 		generate();
 		sendToBuffer();
 	}
+
 }
 void camera::stop() {
 	isActive = false;
 }
+
+camera::~camera()
+{
+	/*if (this->cameraBuffer->getBuffer() != NULL)
+		free(this->cameraBuffer->getBuffer());
+	delete(cameraBuffer);
+	cameraBuffer = nullptr;*/
+	//this->cameraBuffer->cleanBuffer();
+}
+
+void camera::sendToServer()
+{
+	WSAData wsaData;
+	WORD DllVersion = MAKEWORD(2, 1);
+	if (WSAStartup(DllVersion, &wsaData) != 0) {
+		std::cout << "Winsock Connection Failed!" << std::endl;
+		exit(1);
+	}
+	std::string getInput = "";
+	SOCKADDR_IN addr;
+	int addrLen = sizeof(addr);
+	IN_ADDR ipvalue;
+	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	addr.sin_port = htons(8080);
+	addr.sin_family = AF_INET;
+
+	SOCKET connection = socket(AF_INET, SOCK_STREAM, NULL);
+	if (connect(connection, (SOCKADDR*)&addr, addrLen) == 0) {
+		std::cout << "Connected!" << std::endl;
+		getline(std::cin, getInput);
+		send(connection, getInput.c_str(), getInput.length(), 0);
+		return;
+	}
+	else {
+		std::cout << "Error Connecting to Host" << std::endl;
+		}
+	//return 0;
+	//this->cameraBuffer->cleanBuffer();
+	//std::cout << "send to server";
+}
+
+

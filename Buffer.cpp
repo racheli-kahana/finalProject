@@ -1,21 +1,32 @@
 #include "Buffer.h"
 void Buffer::addToBuffer(char* message) {
-	this->buffer = (char**)realloc(this->buffer, sizeof(char*) * (index + 1));
+		m.lock();
+		this->buffer = (char**)realloc(this->buffer, sizeof(char*) * (index + 1));
+	if (buffer == NULL) {
+		exit(-1);
+		m.unlock();
+	}
 	buffer[index] = (char*)malloc(sizeof(discoverM) > sizeof(statusMessage) ? sizeof(discoverM) : sizeof(statusMessage));
 	if (this->buffer != NULL)
 		strcpy(buffer[index++], message);
-
+	m.unlock();
 }
 char** Buffer::getBuffer() {
 	return this->buffer;
 }
 void Buffer::cleanBuffer() {
-
-	if (this->buffer)
-		for (int i = 0; i < sizeof(this->buffer) / sizeof(char*); i++)
+	m.lock();
+	if (this->buffer){
+		free(buffer);
+		buffer = NULL;
+		index = 0;
+	}
+	/*	for (int i = 0; i < index; i++)
 		{
 			free(buffer[i]);
-		}
-	free(buffer);
-	buffer = NULL;
+			buffer[i] = NULL;
+		}*/
+
+	
+	m.unlock();
 }

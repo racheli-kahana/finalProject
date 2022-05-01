@@ -1,7 +1,7 @@
 #ifndef BUFFER
 #define BUFFER
 #include"baseMessage.h"
-//#include"discoverMessage.h"
+#include<mutex>
 #include"discoverM.h"
 #include"statusMessage.h"
 #include <stdlib.h>
@@ -9,10 +9,10 @@
 #include <iostream>
 class Buffer
 {
-	char** buffer=nullptr;
-	int index = 0;
-
+	char** buffer = nullptr;
+	std::mutex m;
 public:
+	int index = 0;
 	void addToBuffer(char*);
 	char** getBuffer();
 	void cleanBuffer();
