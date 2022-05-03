@@ -21,12 +21,5 @@ void Buffer::cleanBuffer() {
 		buffer = NULL;
 		index = 0;
 	}
-	/*	for (int i = 0; i < index; i++)
-		{
-			free(buffer[i]);
-			buffer[i] = NULL;
-		}*/
-
-	
 	m.unlock();
 }

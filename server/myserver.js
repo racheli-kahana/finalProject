@@ -7,14 +7,31 @@ server.listen(port, function() {
 });
 server.on('connection', function(socket) {
     console.log('A new connection has been established.');
-    socket.write('Hello, client.');
-    socket.on('data', function(chunk) {
-        console.log(`Data received from client: ${chunk.toString()}`);
+      socket.on('data', function(chunk) {
+        //console.log(`Data received from client: ${chunk.toString()}`);
+        parseBuffer(chunk);
+       // console.log(chunk.toJSON());
     });
-    socket.on('end', function() {
+    socket.on('close', function() {
         console.log('Closing connection with the client');
     });
     socket.on('error', function(err) {
         console.log(`Error: ${err}`);
     });
+
+          
+    function parseBuffer(buffer) {
+        let message = {}
+        message.type =Buffer.from(buffer).readInt8(0)
+        if (message.type == 1) {
+            message.status = Buffer.from(buffer).readInt8(2)
+        } else {
+            message.distance = Buffer.from(buffer).readFloatLE(2);
+            message.angle = Buffer.from(buffer).readFloatLE(6);
+            message.speed = Buffer.from(buffer).readFloatLE(10);
+        
+        }
+        console.log(message);
+    }
+
 });

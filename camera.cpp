@@ -50,7 +50,7 @@ void camera::sendToBuffer() {
 	for (int i = 0; i < this->size; i++)
 	{
 		messages[i]->parseBack();
-		// messages[i]->print();
+		 messages[i]->print();
 		cameraBuffer->addToBuffer((char*)messages[i]->getMessageBuffer());
 		free(this->messages[i]->getMessageBuffer());
 		delete(this->messages[i]);
@@ -61,13 +61,11 @@ void camera::sendToBuffer() {
 	size = 0;
 }
 void camera::run() {
-	//while (isActive == true)
-	for (int k = 0; k < 1000; ++k)
+	while (isActive == true)
 	{
 		generate();
 		sendToBuffer();
 	}
-
 }
 void camera::stop() {
 	isActive = false;
@@ -84,33 +82,48 @@ camera::~camera()
 
 void camera::sendToServer()
 {
-	WSAData wsaData;
-	WORD DllVersion = MAKEWORD(2, 1);
-	if (WSAStartup(DllVersion, &wsaData) != 0) {
-		std::cout << "Winsock Connection Failed!" << std::endl;
-		exit(1);
-	}
-	std::string getInput = "";
-	SOCKADDR_IN addr;
-	int addrLen = sizeof(addr);
-	IN_ADDR ipvalue;
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	addr.sin_port = htons(8080);
-	addr.sin_family = AF_INET;
-
-	SOCKET connection = socket(AF_INET, SOCK_STREAM, NULL);
-	if (connect(connection, (SOCKADDR*)&addr, addrLen) == 0) {
-		std::cout << "Connected!" << std::endl;
-		getline(std::cin, getInput);
-		send(connection, getInput.c_str(), getInput.length(), 0);
-		return;
-	}
-	else {
-		std::cout << "Error Connecting to Host" << std::endl;
+	while (isActive)
+	{
+		Sleep(3000);
+		WSAData wsaData;
+		WORD DllVersion = MAKEWORD(2, 1);
+		if (WSAStartup(DllVersion, &wsaData) != 0) {
+			std::cout << "Winsock Connection Failed!" << std::endl;
+			exit(1);
 		}
-	//return 0;
-	//this->cameraBuffer->cleanBuffer();
-	//std::cout << "send to server";
+		std::string getInput = "";
+		SOCKADDR_IN addr;
+		int addrLen = sizeof(addr);
+		IN_ADDR ipvalue;
+		addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+		addr.sin_port = htons(8080);
+		addr.sin_family = AF_INET;
+
+		SOCKET connection = socket(AF_INET, SOCK_STREAM, NULL);
+		if (connect(connection, (SOCKADDR*)&addr, addrLen) == 0) {
+			std::cout << "Connected!" << std::endl;
+			for (int i = 0; i < cameraBuffer->index; i++)
+			{
+				getInput = this->cameraBuffer->getBuffer()[i];
+				if(cameraBuffer->getBuffer()[i][0]==1)
+				send(connection, getInput.c_str(),6, 0);
+				else
+				send(connection, getInput.c_str(), 14, 0);
+
+			}
+			closesocket(connection);
+			WSACleanup();
+						return;
+		}
+		else {
+			std::cout << "Error Connecting to Host" << std::endl;
+			this->cameraBuffer->cleanBuffer();
+
+		}
+	}
+	
+	
+	
 }
 
 
